@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro.Mang.</title>
+</head>
+<style>
+    *{
+        font-family: sans-serif;
+    }
+    body
+    {
+    background-color: rgb(5, 5, 53);
+    }
+    .curd
+    {
+    background-color:  rgb(5, 5, 53);
+    margin: auto;
+    width: 90%;
+    height: 700px;
+    }
+    .pli{
+     text-align: center;
+     color: #fff;
+     font-size: 30px;
+     line-height:10px;
+     background-color: black;
+    }
+    input{
+        width: 100%;
+        height: 50px;
+        background-color: rgb(5, 5, 36);
+        border: none;border-radius: 8px;
+        margin: 7px 0px;
+        padding: 5px;
+        color: #fff;
+        font-size: 22px;
+        box-shadow: 5px 5px 10px rgb(1, 1, 30);
+    }
+    input:focus{
+        background-color: black;
+    }
+    .thinp{
+        display: flex;
+    }
+    .thinp input{
+        width: 20%;
+        margin: 7px 8px;
+    }
+    small{
+        padding: 10px;
+        margin: 13px 10px;
+        background-color: rgb(93, 11, 11);
+        width: auto;
+        height: 25px;
+        border: none;border-radius: 8px;
+        font-size: 20px;
+    }
+    small::before{
+        content: 'total:';
+    }
+    button{
+        margin: 10px;
+        width: 100%;
+        height: 50px;
+        border: none ;
+        background-color: rgb(47, 16, 75);
+        box-shadow: 5px 5px 10px rgb(54, 12, 90);
+        border-radius: 8px;
+        margin: 9px 0px;
+        color: #fff;
+        font-size: 25px;
+        transition: 1s;
+        letter-spacing: 0.8px;
+    }
+    button:hover{
+        cursor: pointer;
+        transition: 1s;
+        letter-spacing: 1.1px;
+        background-color: rgb(34, 11, 53);
+    }
+    .towb{
+        margin-top: 10px;
+        display: flex;
+        justify-content: space-between;
+    }
+    .towb button{
+        width: 45%;
+        margin: auto;
+    }
+    table{
+        margin-top: 25px;
+        padding: 5px;
+        color: #fff;
+        font-size:23px;
+        width: 100%;
+        text-align: center;
+    }
+    table button{
+        box-shadow: 0px 0px 0px rgb(54, 12, 90);
+        height: 40px;
+        width: auto;
+        font-size: 18px;
+        padding: auto;
+    }
+    hr{
+        margin: 20px;
+    }
+    #clearall{
+        margin: 20px auto;
+    }
+    #updateitem{
+        display: none;
+    }
+</style>
+<body>
+<div class="curd">
+<p class="pli">Curd</p>
+<p class="pli">Management Product </p>
+<input class="tittle" id="tittle" type="text" placeholder="title">
+<div class="thinp"><input id="price" placeholder="price"  type="number"><input id="taxes" placeholder="taxes" type="number"><input id="ads" placeholder="ads" type="number"><input placeholder="discount" id="discount" type="number"> <small id="totale" class="totale"></small></div>
+<input id="count" placeholder="count" type="number"><input id="Catogray" placeholder="Catogray" type="text">
+<button id="create">Create</button>
+<input onkeyup="search(this.value)" id="Search" placeholder="Search" type="text">
+<div class="towb"><button id="tittle" onclick="searchmood(this.id)">Search by tittle</button><button id="catogray" onclick="searchmood(this.id)">Search by Catogray</button></div>
+<div  id="clearall"></div>
+<hr>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>TITTLE</th>
+        <th>PRICE</th>
+        <th>TAXES</th>
+        <th>ADS</th>
+        <th>DISCOUNT</th>
+        <th>TOTALE</th>
+        <th>CATOGRAY</th>
+        <th>UPDATE</th>
+        <th>DELETE</th>
+    </tr>
+    <tbody id="tbody">
+        
+    </tbody>
+</table>
+</div>
+</body>
+<script>
+    var tittle=document.getElementById("tittle");
+    var price=document.getElementById("price");
+    var taxes=document.getElementById("taxes");
+    var ads=document.getElementById("ads");
+    var discount=document.getElementById("discount");
+    var totale=document.getElementById("totale");
+    var count=document.getElementById("count")
+    var Search=document.getElementById("Search");
+    var Catogray=document.getElementById("Catogray");
+    var create=document.getElementById("create");
+    var clearall=document.getElementById("clearall");
+    var tbody=document.getElementById("tbody");
+    
+    onkeyup=totalfun;
+    function totalfun()
+    {
+        if(price.value!='')
+        {
+            var resulte=Number(price.value)+Number(taxes.value)+Number(ads.value)-Number(discount.value);
+            totale.innerHTML=resulte;
+            totale.style.backgroundColor='green'
+        }
+        else
+        {
+            totale.innerHTML=''
+            totale.style.backgroundColor='rgb(93, 11, 11)'
+        }
+    }
+    let Array;
+    if(localStorage.localobject!=null) //important  its out of functions because localstorage is updating all time
+    {
+        Array=JSON.parse(localStorage.localobject);
+    }
+    else
+    {
+        Array=[];
+    }
+    let mood='Create'; //to make all fun read it the from me and its dont have touch with any thing just if to work button create control
+    create.onclick=function creat() //to make obj for each item
+    {
+     let object={
+        tittle:tittle.value.toLowerCase(),
+        price:price.value,
+        taxes:taxes.value,
+        ads:ads.value,
+        discount:discount.value,
+        totale:totale.innerHTML,
+        Catogray:Catogray.value.toLowerCase(),
+     }
+     if(tittle.value!='' &&price.value!=''&&Catogray.value&&count.value<100)
+    {
+        if(mood==='Create')
+     {
+     if(count.value>1)
+     {
+        for(let x=0;x<count.value;x++)
+        {
+            Array.push(object);//important to push in array the same item more time
+        }
+     }
+     else
+     {
+        Array.push(object);
+     }
+    }
+    else //if mood=update
+    {
+        Array[si]=object;//object from the inputs
+        count.style.display="block";
+        create.innerHTML='Create';
+        mood='Create'
+        scroll({top:704,behavior:"smooth"})
+    }
+    delinputs();
+    }
+    else
+    {
+    }
+    localStorage.setItem('localobject',JSON.stringify(Array));
+     showtable();
+    }
+    showtable();//its out to turnon it everytime
+    function showtable() //show the array in the table
+    {
+        let rowdat='';
+        for(let i=0;i<Array.length;i++) //from array using for (table is html)
+        {
+        rowdat+=` 
+        <tr>
+        <td>${i+1}</td>
+        <td>${Array[i].tittle}</td> 
+        <td>${Array[i].price}</td>
+        <td>${Array[i].taxes}</td>
+        <td>${Array[i].ads}</td>
+        <td>${Array[i].discount}</td>
+        <td>${Array[i].totale}</td>
+        <td>${Array[i].Catogray}</td>
+        <td><button onclick="updatebtn(${i})">UPDATE</button></td>
+        <td><button onclick="delitem(${i})" id="delete">DELETE</button></td>
+        </tr>
+        `
+        }
+        tbody.innerHTML=rowdat;
+    if(Array.length>0)//this if in the showtable() because we need the updating array every time
+    {
+    clearall.innerHTML=`
+    <button onclick="ClearAll()">delete All (${Array.length})</button>
+    `
+    }
+    else
+    {
+        clearall.innerHTML=``
+    }
+    totalfun();// for background of total
+    }
+    
+   function ClearAll()
+   {
+    localStorage.clear();
+    Array.splice(0);
+    showtable() 
+   }
+
+   function delitem(i){
+    Array.splice(i,1);
+    localStorage.localobject=JSON.stringify(Array);
+    showtable();
+   }
+   
+   function updatebtn(i)
+   {
+    mood='Update'
+    create.innerHTML='Update'
+    tittle.value=Array[i].tittle;
+    price.value=Array[i].price;
+    taxes.value=Array[i].taxes;
+    ads.value=Array[i].ads;
+    Catogray.value=Array[i].Catogray
+    discount.value=Array[i].discount;
+    count.style.display="none"
+    totalfun();
+    si=i;//its important to define the i for create function
+
+    scroll({top:0,behavior:"smooth"})
+   }
+    function delinputs()
+    {
+        count.value='';
+        tittle.value='';
+        price.value='';
+        taxes.value='';
+        ads.value='';
+        discount.value='';
+        totale.innerHTML='';
+        Catogray.value ='';
+    }
+    let searchmod='tittle'; 
+    function searchmood(id)
+    {
+     if(id=='tittle')
+     {
+        Search.value='';
+        searchmod='tittle'; //or Search.placeholder='search by tittle';
+     }
+     else
+     {
+        Search.value='';
+        searchmod='catogray';//orSearch.placeholder='search by catogay';
+     }
+     Search.placeholder='search by '+searchmod;
+     showtable();
+     Search.focus();
+    }
+    
+    function search(value)
+    {
+        let rowdat='';
+        if(searchmod=='tittle')
+        {
+         for(let i=0;i<Array.length;i++)
+         {
+            
+            if(Array[i].tittle.includes(Search.value.toLowerCase()))
+            {
+                rowdat+=` 
+        <tr>
+        <td>${i}</td>
+        <td>${Array[i].tittle}</td> 
+        <td>${Array[i].price}</td>
+        <td>${Array[i].taxes}</td>
+        <td>${Array[i].ads}</td>
+        <td>${Array[i].discount}</td>
+        <td>${Array[i].totale}</td>
+        <td>${Array[i].Catogray}</td>
+        <td><button onclick="updatebtn(${i})">UPDATE</button></td>
+        <td><button onclick="delitem(${i})" id="delete">DELETE</button></td>
+        </tr>
+        `
+           }
+            tbody.innerHTML=rowdat;   
+        }
+        }
+        else
+        {
+            for(let i=0;i<Array.length;i++)
+         {
+            
+            if(Array[i].Catogray.includes(Search.value.toLowerCase()))
+            {
+                rowdat+=` 
+        <tr>
+        <td>${i}</td>
+        <td>${Array[i].tittle}</td> 
+        <td>${Array[i].price}</td>
+        <td>${Array[i].taxes}</td>
+        <td>${Array[i].ads}</td>
+        <td>${Array[i].discount}</td>
+        <td>${Array[i].totale}</td>
+        <td>${Array[i].Catogray}</td>
+        <td><button onclick="updatebtn(${i})">UPDATE</button></td>
+        <td><button onclick="delitem(${i})" id="delete">DELETE</button></td>
+        </tr>
+        `
+           }
+            tbody.innerHTML=rowdat;   
+        
+        }
+        }
+    }
+    
+</script>
+</html>
